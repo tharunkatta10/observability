@@ -1,0 +1,4 @@
+Flask==2.2.5
+prometheus_client
+jaeger-client
+flask_opentracing

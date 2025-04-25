@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: app
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./app.log:/var/log/app.log
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana:/var/lib/grafana
+
+  loki:
+    image: grafana/loki:2.9.3
+    container_name: loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+
+  promtail:
+    image: grafana/promtail:2.9.3
+    container_name: promtail
+    volumes:
+      - ./promtail-config.yml:/etc/promtail/config.yml
+      - ./app.log:/var/log/app.log
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.53
+    container_name: jaeger
+    ports:
+      - "16686:16686"   # UI
+      - "6831:6831/udp" # Agent
+
